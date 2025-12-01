@@ -23,24 +23,31 @@ for line in lines:
     
     # Update result based on direction
     if direction == 'L':
-        result = (result - value) % 100
+        result = ((result - value) % 100 + 100) % 100
     else:  # 'R'
         result = (result + value) % 100
     
-    # Check if result is 0 and increment counter based on method
+    # Check the result and increment counter based on method
     if method == "0x0":
         if result == 0:
             counter += 1
     elif method == "0x434C49434B":
-        # Count if we land on 0
         if result == 0:
             counter += 1
-        # Count if we pass through 0
+            continue
         if direction == 'L':
-            if prev_result < value % 100:
-                counter += 1
+            # Count how many times we cross 0 going left
+            crosses = value // 100
+            remaining = value % 100
+            if remaining > prev_result:
+                crosses += 1
+            counter += crosses
         else:  # 'R'
-            if prev_result + value >= 100:
-                counter += 1
+            # Count how many times we cross 0 going right
+            crosses = value // 100
+            remaining = value % 100
+            if prev_result + remaining >= 100:
+                crosses += 1
+            counter += crosses
 
 print(counter)
